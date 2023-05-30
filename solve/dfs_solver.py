@@ -25,13 +25,10 @@ rows = "ABCDEFGHI"
 cols = "123456789"
 
 cells = gen_cells(rows, cols)
-units = [permutate(r, c) for r in ["ABC", "DEF", "GHI"] for c in ["123", "456", "789"]] 
-unit_list = []
+unit_list = ([permutate(r, c) for r in ["ABC", "DEF", "GHI"] for c in ["123", "456", "789"]] +
+         [permutate(rows, col) for col in cols] +
+         [permutate(row, cols) for row in rows])
 
-for cell in cells:
-    for unit in units:
-        if cell in unit:
-            unit_list.append((cell, unit))
-
-unit_dict = dict(unit_list)
+units = dict([(cell, [unit for unit in unit_list if cell in unit]) for cell in cells])
+print(units["A1"])
 
