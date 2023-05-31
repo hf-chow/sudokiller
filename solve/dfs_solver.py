@@ -4,7 +4,7 @@ a board if it is purely solved by brute force search
 Borrowing idea from Peter Norvig's incredible blog post:
     Generate units and peers for each cells
     Implement the following strategies to eliminate possible solutions:
-        -If a square has only one possible value, then eliminate that value 
+        -If a cell has only one possible value, then eliminate that value 
         from the peers
         -If a unit has only one possible place for a value, the put the value 
         there
@@ -13,13 +13,14 @@ Borrowing idea from Peter Norvig's incredible blog post:
     a possible value may trigger another a 2nd strat and so on. This is
     constraint propagation.
 """
+def flatten(l):
+    return [i for j in l for i in j]
 
 def permutate(X, Y):
     return [x+y for x in X for y in Y]
 
 def gen_cells(rows, cols):
     return permutate(rows, cols)
-
 
 rows = "ABCDEFGHI"
 cols = "123456789"
@@ -30,5 +31,31 @@ unit_list = ([permutate(r, c) for r in ["ABC", "DEF", "GHI"] for c in ["123", "4
          [permutate(row, cols) for row in rows])
 
 units = dict([(cell, [unit for unit in unit_list if cell in unit]) for cell in cells])
-print(units["A1"])
+peers = dict([(cell, set(flatten(units[cell])) - set([cell])) for cell in cells])
 
+
+
+def assign_n_check(group, cell, to_delete):
+    """
+    Assign the value to a cell and check all the other member of its unit or 
+    its peer for the remaining possible values, whether the value is the only
+    possible value in any of the cell of the group,. group can be either 
+    unit or peer.
+    """
+
+    possible_vals_remain = group[cell].replace(to_delete, "")
+
+    for possible_val in possible_vals_remain:
+        for to_check in possible_val:
+            elim_n_check(group, cell, to_check) 
+
+    
+
+    pass
+
+def elim_n_check(group, cell, to_delete):
+    """
+    Check if there are any cell with len(group[cell]) == 1. If true, call
+    assign_n_check on it. 
+    """
+    
