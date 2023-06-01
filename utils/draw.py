@@ -1,4 +1,4 @@
-import coord
+import utils.coord
 """
 Visualization function to draw the board
 Importing coord.py to enable the draw function to work on both grid and board
