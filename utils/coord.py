@@ -1,5 +1,3 @@
-test = "679518243543729618821634957794352186358461729216897534485276391962183475137945862"
-
 """
 Nomenclatures:
     A grid is a string of 81 len; reading a sudoku board from left to right
@@ -19,8 +17,6 @@ def assign_coord(grid):
 
     return dict(zip(cells, grid))
 
-print(assign_coord(test))
-
 def strip_coord(board):
     """
     Helper function to reverse the coordinates assignment
@@ -32,4 +28,3 @@ def strip_coord(board):
     
     return grid
 
-print(strip_coord(assign_coord(test)))

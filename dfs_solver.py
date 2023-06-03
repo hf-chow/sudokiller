@@ -44,7 +44,7 @@ def parse_board(board):
     return parsed_board
 
 
-def assign_n_check(group, cell, to_delete):
+def assign(group, cell, to_delete):
     """
     Assign the value to a cell and the delete the value from the other members'
     possible values list. Check all the other member of its unit or 
@@ -56,43 +56,46 @@ def assign_n_check(group, cell, to_delete):
     possible_vals_remain = group[cell].replace(to_delete, "")
 
     for possible_val in possible_vals_remain:
-        for to_check in possible_val:
-            elim_n_check(group, cell, to_check) 
-    return group
+        new_group = elim(group, cell, possible_val) 
+    return new_group
 
-def elim_n_check(group, cell, to_delete):
+def elim(group, cell, to_delete):
     """
     Delete the value that is taken by another cell of the group. Check if the
     remaining possible values reduce to zero. If so, call assign_n_check to 
     assign and to recursively check the other members
     """
 
+    if to_delete not in group[cell]:
+        return group
+
     possible_vals_remain = group[cell].replace(to_delete, "")
 
     if len(group[cell]) == 1:
-        assign_n_check(group, cell, group[cell][0])
-
-    for peer in peers[cell]:
-        elim_n_check(group, peer, group[cell][0])
+        for peer in peers[cell]:
+            group = elim(group, cell, group[cell][0])
 
     for unit in units[cell]:
-        elim_n_check(group, unit, group[cell][0])
+        possible_cells = [cell for cell in unit if to_delete in group[cell]]
+        if len(possible_cells) == 1:
+            group = assign(group, possible_cells[0], to_delete)
 
     return group
 
 def search(board):
-    draw(board)
-    if all([len(board[cell]) for cell in cells]) == 1:
+    if all(len(board[cell]) == 1 for cell in cells):
         return True
     for cell in board:
         if len(board[cell]) > 1:
             for val in board[cell]:
-                new_board = assign_n_check(board, cell, val)
+                new_board = assign(board, cell, val)
+    print(new_board)
     return search(new_board)
 
-test = "679508243543720618821634957794352186058461729216897534485276391962183475137945862"
+def solve(board):
+    board = parse_board(board)
+    search(board)
 
-test = parse_board(test)
-
-print(search(test))
+test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
+solve(test)
 

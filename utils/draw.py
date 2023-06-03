@@ -8,8 +8,6 @@ The amount of loops in this function also makes me uncomfortable
 Revisit this function
 """
 
-test = "679518243543729618821634957794352186358461729216897534485276391962183475137945862"
-
 def draw(grid):
     if type(grid) == "dict":
         grid = strip(grid)
@@ -34,6 +32,3 @@ def draw(grid):
         count += 1
         if count == 3 or count == 6:
             print(hor_sep)
-
-draw(test)
-        
