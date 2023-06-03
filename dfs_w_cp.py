@@ -56,13 +56,6 @@ def assign(group, cell, to_delete):
     if all(elim(group, cell, possible_val) for possible_val in possible_vals_remain):
         return group
     else:
-        return False
-
-#    for possible_val in possible_vals_remain:
-#        if not elim(group, cell, possible_val):
-#            return False
-#        else:
-#            return group
 
 def elim(group, cell, to_delete):
 
@@ -104,10 +97,8 @@ def solve(board):
     board = parse_board(board)
     return search(board)
 
-test = "085923476942576138763418592259841763678395241314267859896154327437682915521739684"
-
-print(solve(test))
-
+#test = "085923476942576138763418592259841763678395241314267859896154327437682915521739684"
+#print(solve(test))
 
 
-#test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
+
