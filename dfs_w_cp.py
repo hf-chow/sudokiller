@@ -23,6 +23,12 @@ def permutate(X, Y):
 def gen_cells(rows, cols):
     return permutate(rows, cols)
 
+def some(seq):
+    for e in seq:
+        if e:
+            return e
+    return False
+
 rows = "ABCDEFGHI"
 cols = "123456789"
 
@@ -43,59 +49,61 @@ def parse_board(board):
 
     return parsed_board
 
-
 def assign(group, cell, to_delete):
-    """
-    Assign the value to a cell and the delete the value from the other members'
-    possible values list. Check all the other member of its unit or 
-    its peer for the remaining possible values, whether the value is the only
-    possible value in any of the cell of the group,. group can be either 
-    unit or peer.
-    """
 
     possible_vals_remain = group[cell].replace(to_delete, "")
 
     for possible_val in possible_vals_remain:
-        new_group = elim(group, cell, possible_val) 
-    return new_group
+        if not elim(group, cell, possible_val):
+            return False
+        else:
+            return group
 
 def elim(group, cell, to_delete):
-    """
-    Delete the value that is taken by another cell of the group. Check if the
-    remaining possible values reduce to zero. If so, call assign_n_check to 
-    assign and to recursively check the other members
-    """
 
     if to_delete not in group[cell]:
         return group
 
-    possible_vals_remain = group[cell].replace(to_delete, "")
+    group[cell] = group[cell].replace(to_delete, "")
 
-    if len(group[cell]) == 1:
+    if len(group[cell]) == 0:
+        return False
+    elif len(group[cell]) == 1:
         for peer in peers[cell]:
-            group = elim(group, cell, group[cell][0])
+            if not elim(group, peer, group[peer]):
+                    return False
 
     for unit in units[cell]:
         possible_cells = [cell for cell in unit if to_delete in group[cell]]
         if len(possible_cells) == 1:
-            group = assign(group, possible_cells[0], to_delete)
+            if not assign(group, possible_cells[0], to_delete):
+                return False
+        elif len(possible_cells) == 0:
+            return False
 
     return group
 
-def search(board):
-    if all(len(board[cell]) == 1 for cell in cells):
-        return True
-    for cell in board:
-        if len(board[cell]) > 1:
-            for val in board[cell]:
-                new_board = assign(board, cell, val)
-    print(new_board)
-    return search(new_board)
+def search(group):
+
+    if group is False:
+        return False 
+
+    if all(len(group[cell]) == 1 for cell in cells): 
+        return group 
+
+    _, cell = min((len(group[cell]), cell) for cell in cells if len(group[cell]) > 1)
+
+    return some(search(assign(group.copy(), cell, to_delete)) 
+		for to_delete in group[cell])
 
 def solve(board):
     board = parse_board(board)
-    search(board)
+    return search(board)
 
-test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
-solve(test)
+test = "085923476942576138763418592259841763678395241314267859896154327437682915521739684"
 
+print(solve(test))
+
+
+
+#test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
