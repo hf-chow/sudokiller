@@ -53,11 +53,16 @@ def assign(group, cell, to_delete):
 
     possible_vals_remain = group[cell].replace(to_delete, "")
 
-    for possible_val in possible_vals_remain:
-        if not elim(group, cell, possible_val):
-            return False
-        else:
-            return group
+    if all(elim(group, cell, possible_val) for possible_val in possible_vals_remain):
+        return group
+    else:
+        return False
+
+#    for possible_val in possible_vals_remain:
+#        if not elim(group, cell, possible_val):
+#            return False
+#        else:
+#            return group
 
 def elim(group, cell, to_delete):
 
@@ -69,9 +74,8 @@ def elim(group, cell, to_delete):
     if len(group[cell]) == 0:
         return False
     elif len(group[cell]) == 1:
-        for peer in peers[cell]:
-            if not elim(group, peer, group[peer]):
-                    return False
+        if not all(elim(group, cell_, group[cell]) for cell_ in peers[cell]):
+            return False
 
     for unit in units[cell]:
         possible_cells = [cell for cell in unit if to_delete in group[cell]]
