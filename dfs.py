@@ -15,3 +15,31 @@ delete the latest key from hashmaps.
 This strategy will ensure a correct solution, since this is a smarter version
 of brute force search. But this could take extremely long for very hard puzzles.
 """
+
+def parse_board(board):
+    """
+    To parse the board and convert it into a list[list[string]]
+    """
+    parsed_board = [[board[i*j] for j in range(9)] for i in range (9)]
+
+    return parsed_board
+
+rows = defaultdict(set)
+cols = defaultdict(set)
+grids = defaultdict(set)
+empty = deque()
+
+test = "085923476942576138763418592259841763678395241314267859896154327437682915521739684"
+
+parsed_board = parse_board(test)
+
+for i in range(9):
+    for j in range(9):
+        if parsed_board[i][j] != "0":
+            rows[i].add(parsed_board[i][j])
+            cols[j].add(parsed_board[i][j])
+            grids[(i//3, j//3)].add(parsed_board[i][j])
+
+print(rows)
+print(cols)
+print(grids)
