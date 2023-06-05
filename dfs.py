@@ -16,30 +16,51 @@ This strategy will ensure a correct solution, since this is a smarter version
 of brute force search. But this could take extremely long for very hard puzzles.
 """
 
-def parse_board(board):
-    """
-    To parse the board and convert it into a list[list[string]]
-    """
-    parsed_board = [[board[i*j] for j in range(9)] for i in range (9)]
+test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
 
-    return parsed_board
+parsed_board = [[test[i*j] for j in range(9)] for i in range (9)]
 
 rows = defaultdict(set)
 cols = defaultdict(set)
 grids = defaultdict(set)
-empty = deque()
-
-test = "085923476942576138763418592259841763678395241314267859896154327437682915521739684"
-
-parsed_board = parse_board(test)
+tracker = deque([])
 
 for i in range(9):
     for j in range(9):
         if parsed_board[i][j] != "0":
-            rows[i].add(parsed_board[i][j])
-            cols[j].add(parsed_board[i][j])
-            grids[(i//3, j//3)].add(parsed_board[i][j])
+           rows[i].add(parsed_board[i][j])
+           cols[j].add(parsed_board[i][j])
+           grids[(i//3, j//3)].add(parsed_board[i][j])
+        else:
+           tracker.append((i, j))
+
+def dfs_search():
+
+    if len(tracker) == 0:
+        return True
+
+    i, j = tracker[0]
+
+    for n in [str(x) for x in range(1, 10)]:
+        if (n not in rows[i]) and (n not in cols[j]) and (n not in grids[(i//3, j//3)]):
+            rows[i].add(n)
+            cols[j].add(n)
+            grids[(i//3, j//3)].add(n)
+            tracker.popleft()
+            
+            if dfs_search():
+                return True
+            else:
+                rows[i].discard(n)
+                cols[j].discard(n)
+                grids[(i//3, j//3)].discard(n)
+                tracker.appendleft((i,j))
+
+    return False
+
+
+
+dfs_search()
 
 print(rows)
-print(cols)
-print(grids)
+
