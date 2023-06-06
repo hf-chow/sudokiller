@@ -16,28 +16,30 @@ This strategy will ensure a correct solution, since this is a smarter version
 of brute force search. But this could take extremely long for very hard puzzles.
 """
 
-test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
 
-parsed_board = [[test[i*j] for j in range(9)] for i in range (9)]
+def parse_board(board):
+    parsed_board = [[board[i*j] for j in range(9)] for i in range (9)]
 
-rows = defaultdict(set)
-cols = defaultdict(set)
-grids = defaultdict(set)
-tracker = deque([])
+    rows = defaultdict(set)
+    cols = defaultdict(set)
+    grids = defaultdict(set)
+    tracker = deque([])
 
-for i in range(9):
-    for j in range(9):
-        if parsed_board[i][j] != "0":
-           rows[i].add(parsed_board[i][j])
-           cols[j].add(parsed_board[i][j])
-           grids[(i//3, j//3)].add(parsed_board[i][j])
-        else:
-           tracker.append((i, j))
+    for i in range(9):
+        for j in range(9):
+            if parsed_board[i][j] != "0":
+                rows[i].add(parsed_board[i][j])
+                cols[j].add(parsed_board[i][j])
+                grids[(i//3, j//3)].add(parsed_board[i][j])
+            else:
+                tracker.append((i, j))
 
-def dfs_search():
+    return rows, cols, grids, tracker
+
+def dfs_search(rows, cols, grids, tracker):
 
     if len(tracker) == 0:
-        return True
+        return rows, cols, grids, tracker
 
     i, j = tracker[0]
 
@@ -48,8 +50,8 @@ def dfs_search():
             grids[(i//3, j//3)].add(n)
             tracker.popleft()
             
-            if dfs_search():
-                return True
+            if dfs_search(rows, cols, grids, tracker):
+                return rows, cols, grids, tracker
             else:
                 rows[i].discard(n)
                 cols[j].discard(n)
@@ -58,9 +60,17 @@ def dfs_search():
 
     return False
 
+def solve(board):
+    rows, cols, grids, tracker = parse_board(board)
+
+    dfs_search(rows, cols, grids, tracker)
+
+    return rows, cols, grids, tracker
 
 
-dfs_search()
+test = "180023000942500008060010092209840000608395040300067850806000027407002900001700004"
+
+rows, cols, grids, tracker = solve(test)
 
 print(rows)
 
